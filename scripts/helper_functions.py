@@ -62,7 +62,7 @@ def _show_image0(folder,file,subplot):
     ax.imshow(img)  
     return ax,img
 
-def _format_fig(figure,class_name):
+def _format_fig0(figure,class_name):
   """
     Formats subplots to reduce whitespace
   """
