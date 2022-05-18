@@ -209,11 +209,12 @@ def _show_image1(image,subplot):
     ax.imshow(image)  
     return ax
 
-def _format_fig1(figure):
+def _format_fig1(figure,
+                 title='Images of Augmented Data'):
   """
     Formats subplots to reduce whitespace
   """
-  figure.suptitle(f'Images of Augmented Data',
+  figure.suptitle(f'{title}',
                   fontsize=12,
                   y=0.99)
   figure.tight_layout(pad=2,
@@ -289,7 +290,7 @@ def view_random_images(data,class_names):
                names=class_names)
   
   #--- Add a Title
-  _format_fig1(figure=fig)
+  _format_fig1(figure=fig,title='Random Images')
 
 
 
@@ -427,19 +428,29 @@ def BuildCompileFit(trn_data,val_data,layers,loss,optimizer,callbacks,metrics,
   return model,history
 
 
-def ContinueTraining(trn_data,val_data,model,callbacks,epochs,verbose=0):
+def ContinueTraining(trn_data,val_data,model,callbacks,epochs,
+                    train_percent=1,validation_percent=1,verbose=0):
   """
     Used to avoid recompiling a new model, 
     to continue after some initial training. 
   """
 
+  train_steps = max(1,
+                    int(train_percent*len(trn_data))
+                    )
+  valid_steps = max(1,
+                   int(validation_percent*len(val_data)))
+  
+  print(f'steps durring training: {train_steps}\nsteps durring validation: {valid_steps}')
+
+
   #--- Fit Model:
   history=model.fit(trn_data,
-                    epochs=epochs,
-                    steps_per_epoch=len(trn_data),
-                    callbacks=callbacks,
                     validation_data=val_data,
-                    validation_steps=len(val_data),
+                    epochs=epochs,
+                    steps_per_epoch=train_steps,
+                    validation_steps=valid_steps,
+                    callbacks=callbacks,
                     verbose=verbose)
 
   #--- Evaluate Model
