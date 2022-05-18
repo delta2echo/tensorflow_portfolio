@@ -57,7 +57,7 @@ def get_class_names(folder_name):
   return class_names 
 
 #-------------------------------------Helper Functions: make_subfolder, move_files
-def make_subfolder(root,class_names):
+def make_subfolders(root,class_names):
   """
     Will create a directory structure:
       root/
