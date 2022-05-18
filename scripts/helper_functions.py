@@ -190,7 +190,7 @@ def view_random_class_images(target_dir,target_class):
   _format_fig0(figure=fig,
               class_name=target_class)
 
-#--------------------------------------------------------------
+#----------------------------------------------Helper Functions: view_random_augmented_images, 
 
 def _get_random_images1(images,labels):
   batch_size = images.shape[0]
@@ -260,8 +260,28 @@ def view_random_augmented_images(data,class_names):
   #--- Add a Title
   _format_fig1(figure=fig)
   
+#--------------------------------------------------Helper Functions: create_tensorboard_callback
+
+ def create_tensorboard_callback(dir_name, experiment_name):
+  #---Create Log Directory:
+  time_stamp = datetime.now().strftime("%y%m%d_%H%M%S")  #yymmdd_HHMMSS
+  log_dir = f'{dir_name}/{experiment_name}/{time_stamp}'
+
+  #--Init TB callback:
+  tensorboard_callback = callbacks.TensorBoard(log_dir=log_dir)
   
-#---------------Build some helper functions:
+  #---Return output:
+  print(f'Set TensorBoard log files to: {log_dir}')
+  return tensorboard_callback
+  
+def upload_tensorboard(log_dir,experiment_name,description):
+    eval(f'!tensorboard dev upload \
+      --logdir {log_dir} \
+      --name {experiment_name} \
+      --description {description} \
+      --one_shot')   
+  
+#----------------------------------------Helper functions: Show_Model, Training_Plot, BuildCompileFit, ContinueTraining
 
 def Show_Model(model,name):
     """
@@ -315,7 +335,7 @@ def Training_Plot(history):
 
 
 def BuildCompileFit(trn_data,val_data,layers,loss,optimizer,callbacks,metrics,
-                    rndSeed,epochs,verbose=0,show_model=False,model_name='Model'):
+                    rndSeed,epochs,validation_percent=1,verbose=0,show_model=False,model_name='Model'):
   
   #--- Set Random Seed
   tf.random.set_seed(rndSeed)
@@ -325,16 +345,23 @@ def BuildCompileFit(trn_data,val_data,layers,loss,optimizer,callbacks,metrics,
 
   #--- Compile Model
   model.compile(loss=loss,
-                  optimizer=optimizer,
-                  metrics=metrics)
+                optimizer=optimizer,
+                metrics=metrics)
   
   if show_model:
      Show_Model(model,model_name)
-
+  
+  
+  train_steps = len(trn_data)
+  valid_steps = max(1,
+                   int(validation_percent*len(val_data)))
+  
+  
   #--- Fit Model:
   history=model.fit(trn_data,
                     epochs=epochs,
-                    steps_per_epoch=len(trn_data),
+                    steps_per_epoch=train_steps ,
+                    validation_steps=valid_steps,
                     callbacks=callbacks,
                     validation_data=val_data,
                     validation_steps=len(val_data),
