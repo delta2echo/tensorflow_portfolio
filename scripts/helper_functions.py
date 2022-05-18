@@ -20,7 +20,7 @@ from tensorflow.keras.utils import plot_model
 from datetime import datetime
 from tensorflow.keras import callbacks
 
-for math import ceil    
+from math import ceil    
     
 def unzip_files(file_name):
   """
@@ -268,9 +268,9 @@ def view_random_images(data,class_names):
   
   #Setup the target directory:
   target_data, target_labels = None,None
-  for batch,batch_labels in data.batch(1):              #return a single batch
-    target_data = np.array(tf.squeeze(batch))           #resulting shape (batch_size,height,width,depth)
-    target_labels=np.array(tf.squeeze(batch_labels))    #resulting shape (batch_size,num_classes)
+  for batch,batch_labels in data.batch(1):                    #return a single batch
+    target_data = np.array(tf.squeeze(batch))/255.0           #resulting shape (batch_size,height,width,depth)
+    target_labels=np.array(tf.squeeze(batch_labels))          #resulting shape (batch_size,num_classes)
     break
     
   #get 9 random image names:
@@ -362,11 +362,12 @@ def Training_Plot(history):
     Will plot results from model training:
       loss,accuracy vs epochs
   """
+  
   fig = plt.figure(figsize=(15,4))
   axL = plt.subplot(121)
   axR = plt.subplot(122)
   for key,y in history.history.items():
-    x = range(0,len(y))
+    x = history.epoch
     if 'loss' in key:
       axR.plot(x,y,label=key)
     else:
@@ -403,7 +404,7 @@ def BuildCompileFit(trn_data,val_data,layers,loss,optimizer,callbacks,metrics,
                    )
   
   #------ Needed so that all epochs will complete
-  n_epochs = (epochs-initial_epoch)
+  n_epochs = epochs
   rep_train = ceil(train_percent*n_epochs)
   rep_valid = ceil(validation_percent*n_epochs)
   
