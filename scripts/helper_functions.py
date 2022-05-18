@@ -16,7 +16,9 @@ import pandas as pd
 import tensorflow as tf
 from tensorflow.keras.utils import plot_model
 
-
+#--- Imports used for callbacks:
+from datetime import datetime
+from tensorflow.keras import callbacks
     
     
 def unzip_files(file_name):
@@ -280,7 +282,19 @@ def upload_tensorboard(log_dir,experiment_name,description):
       --name {experiment_name} \
       --description {description} \
       --one_shot')   
-  
+
+def Show_Is_Trainable(model):
+  """
+    will display a table showing the model's layer names, 
+    and the layer's trainable status.
+  """
+  fmt0 = len(f'{len(model.layers)}')
+  fmtw = max([len(layer.name) for layer in model.layers]) + 10
+  for i, layer in enumerate(model.layers):
+    fmtsp = " "*(fmtw-len(layer.name))
+    laynum = f'{i}'.rjust(fmt0,'0')
+    print(laynum,layer.name,f'{fmtsp} {layer.trainable}')  
+
 #----------------------------------------Helper functions: Show_Model, Training_Plot, BuildCompileFit, ContinueTraining
 
 def Show_Model(model,name):
