@@ -55,7 +55,71 @@ def get_class_names(folder_name):
   class_names = np.array(sorted([item.name for item in data_dir.glob('*')]))
   print(class_names)
   return class_names 
+
+#-------------------------------------Helper Functions: make_subfolder, move_files
+def make_subfolder(root,class_names):
+  """
+    Will create a directory structure:
+      root/
+        class_a/
+        class_b/
+        ...
+  """
+  if not os.path.isdir(root):
+    os.mkdir(root)
   
+  for class_name in class_names:
+    subfolder = f'{root}/{class_name}'
+    if not os.path.isdir(subfolder):
+      os.mkdir(subfolder)
+      
+
+def move_files(file_names,move_from_dir,move_to_dir,class_names):
+  """
+    ***NOTE: Must have run 'make_subfolder' function first! ***
+    Will move image files from source directory into specified subdirectories. 
+    ex: 
+      move files specified in this directory structure:
+        food-101/
+          |_images/
+              |_class_a/
+              |_class_b/
+              |_...
+
+      into files in this directory structure:
+        food-101/
+          |_test/
+              |_class_a/
+              |_class_b/
+              |_...
+          |_train/
+              |_class_a/
+              |_class_b/
+              |_...
+  """
+  file_img_names = open(file_names,'r')
+  for image_name in file_img_names.readlines():
+    #----- Setup:
+    image_name = image_name.replace('\n','')                            #removes the new-line character ('\n') from image name 
+    class_name = image_name.split('/')[0]
+
+    source_filename = f'{move_from_dir}/{image_name}.jpg'               #Get current full path to image
+    destination_filename = f'{move_to_dir}/{image_name}.jpg'            #Make new destination path for image
+    destination_folder = f'{move_to_dir}/{class_name}'                  #Will be used to check if destination subfolder exists
+
+    #----- Move Files
+    source_exists = os.path.isfile(source_filename)
+    destination_exists = os.path.isdir(destination_folder)
+
+    if (source_exists and destination_exists):                          #double check that files and folders exist
+      os.replace(source_filename, destination_filename)                 #Move image file     
+    else:                                                               #report error to user
+      print(f'source file exists {source_exists}: {source_filename}')
+      print(f'destination folder exists {destination_exists}: {destination_folder}')
+  file_img_names.close()                                                #close/terminate resource
+  print('done!')
+
+
 #-------------------------------------Helper Functions: view_random_class_images
 
 def _get_random_images0(folder):
