@@ -1,6 +1,7 @@
 
 #--- imports needed for retrieving data
 import zipfile
+import tarfile
 import os
 import pathlib
 import numpy as np
@@ -16,14 +17,22 @@ import tensorflow as tf
 from tensorflow.keras.utils import plot_model
 
 
-
-
+    
+    
 def unzip_files(file_name):
   """
-    Will unzip provided file.
+    Will extract provided zip or tar.gz file.
   """
-  #Unzip the downloaded file:
-  zip_ref = zipfile.ZipFile(file_name)
+  #---Determine File Type
+  if '.zip' in file_name.lower()[-4:]:
+    zip_ref = zipfile.ZipFile(file_name)
+  elif '.tar.gz' in file_name.lower()[-7:]:
+    zip_ref = tarfile.open(file_name)
+  else:
+    print("File must be a '.zip' or '.tar.gz', file has not been extracted.")
+    return None
+    
+  #---Extract the downloaded file:   
   zip_ref.extractall()
   zip_ref.close()
   print('Done!')
