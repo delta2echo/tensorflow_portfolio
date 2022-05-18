@@ -19,7 +19,8 @@ from tensorflow.keras.utils import plot_model
 #--- Imports used for callbacks:
 from datetime import datetime
 from tensorflow.keras import callbacks
-    
+
+for math import ceil    
     
 def unzip_files(file_name):
   """
@@ -307,13 +308,7 @@ def create_tensorboard_callback(dir_name, experiment_name):
   #---Return output:
   print(f'Set TensorBoard log files to: {log_dir}')
   return tensorboard_callback
-  
-def upload_tensorboard(log_dir,experiment_name,description):
-    eval(f'!tensorboard dev upload \
-      --logdir {log_dir} \
-      --name {experiment_name} \
-      --description {description} \
-      --one_shot')   
+    
 
 def Show_Is_Trainable(model):
   """
@@ -398,7 +393,7 @@ def BuildCompileFit(trn_data,val_data,layers,loss,optimizer,callbacks,metrics,
   if show_model:
      Show_Model(model,model_name)
   
-  
+  #------- Number of batches per epoch
   train_steps = max(1,
                     int(train_percent*len(trn_data))
                     )
@@ -407,10 +402,14 @@ def BuildCompileFit(trn_data,val_data,layers,loss,optimizer,callbacks,metrics,
                    int(validation_percent*len(val_data))
                    )
   
+  #------ Needed so that all epochs will complete
+  n_epochs = (epochs-initial_epoch)
+  rep_train = ceil(train_percent*n_epochs)
+  rep_valid = ceil(validation_percent*n_epochs)
   
-  #--- Fit Model:
-  history=model.fit(trn_data,
-                    validation_data=val_data, 
+  #----- Fit Model:
+  history=model.fit(trn_data.repeat(rep_train),
+                    validation_data=val_data.repeat(rep_valid), 
                     epochs=epochs,
                     steps_per_epoch=train_steps ,
                     validation_steps=valid_steps,
@@ -418,7 +417,7 @@ def BuildCompileFit(trn_data,val_data,layers,loss,optimizer,callbacks,metrics,
                     verbose=verbose)
 
 
-  #--- Evaluate Model
+  #----- Evaluate Model
   if not verbose:
     print('\nEvaluation: ',model.evaluate(trn_data),'\n')              
 
@@ -428,13 +427,14 @@ def BuildCompileFit(trn_data,val_data,layers,loss,optimizer,callbacks,metrics,
   return model,history
 
 
-def ContinueTraining(trn_data,val_data,model,callbacks,epochs,
+def ContinueTraining(trn_data,val_data,model,callbacks,epochs,initial_epoch=0,
                     train_percent=1,validation_percent=1,verbose=0):
   """
     Used to avoid recompiling a new model, 
     to continue after some initial training. 
   """
-
+  
+  #------- Number of batches per epoch
   train_steps = max(1,
                     int(train_percent*len(trn_data))
                     )
@@ -443,14 +443,20 @@ def ContinueTraining(trn_data,val_data,model,callbacks,epochs,
   
   print(f'steps durring training: {train_steps}\nsteps durring validation: {valid_steps}')
 
-
+  #------ Needed so that all epochs will complete
+  n_epochs = (epochs-initial_epoch)
+  rep_train = ceil(train_percent*n_epochs)
+  rep_valid = ceil(validation_percent*n_epochs)
+  
+  
   #--- Fit Model:
-  history=model.fit(trn_data,
-                    validation_data=val_data,
+  history=model.fit(trn_data.repeat(rep_train),
+                    validation_data=val_data.repeat(rep_valid),
                     epochs=epochs,
                     steps_per_epoch=train_steps,
                     validation_steps=valid_steps,
                     callbacks=callbacks,
+                    initial_epoch=initial_epoch,
                     verbose=verbose)
 
   #--- Evaluate Model
