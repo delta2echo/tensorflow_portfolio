@@ -261,10 +261,41 @@ def view_random_augmented_images(data,class_names):
   
   #--- Add a Title
   _format_fig1(figure=fig)
+
+def view_random_images(data,class_names):
   
+  #Setup the target directory:
+  target_data, target_labels = None,None
+  for batch,batch_labels in data.batch(1):              #return a single batch
+    target_data = np.array(tf.squeeze(batch))           #resulting shape (batch_size,height,width,depth)
+    target_labels=np.array(tf.squeeze(batch_labels))    #resulting shape (batch_size,num_classes)
+    break
+    
+  #get 9 random image names:
+  images,labels = _get_random_images1(target_data,target_labels)
+
+  #Setup for showing images
+  fig = plt.figure(figsize=(9,9))
+
+  #Show random images
+  for ax_idx, img in enumerate(zip(images,labels)):
+    image, label = img
+    ax = _show_image1(image=image,
+                     subplot=331 + ax_idx)
+    #-Format:
+    _format_ax1(ax=ax,
+               idx=ax_idx,
+               label=label,
+               names=class_names)
+  
+  #--- Add a Title
+  _format_fig1(figure=fig)
+
+
+
 #--------------------------------------------------Helper Functions: create_tensorboard_callback
 
- def create_tensorboard_callback(dir_name, experiment_name):
+def create_tensorboard_callback(dir_name, experiment_name):
   #---Create Log Directory:
   time_stamp = datetime.now().strftime("%y%m%d_%H%M%S")  #yymmdd_HHMMSS
   log_dir = f'{dir_name}/{experiment_name}/{time_stamp}'
@@ -349,7 +380,8 @@ def Training_Plot(history):
 
 
 def BuildCompileFit(trn_data,val_data,layers,loss,optimizer,callbacks,metrics,
-                    rndSeed,epochs,validation_percent=1,verbose=0,show_model=False,model_name='Model'):
+                    rndSeed,epochs,train_percent=1,validation_percent=1,
+                    verbose=0, show_model=False,model_name='Model'):
   
   #--- Set Random Seed
   tf.random.set_seed(rndSeed)
@@ -366,19 +398,22 @@ def BuildCompileFit(trn_data,val_data,layers,loss,optimizer,callbacks,metrics,
      Show_Model(model,model_name)
   
   
-  train_steps = len(trn_data)
+  train_steps = max(1,
+                    int(train_percent*len(trn_data))
+                    )
+                    
   valid_steps = max(1,
-                   int(validation_percent*len(val_data)))
+                   int(validation_percent*len(val_data))
+                   )
   
   
   #--- Fit Model:
   history=model.fit(trn_data,
+                    validation_data=val_data, 
                     epochs=epochs,
                     steps_per_epoch=train_steps ,
                     validation_steps=valid_steps,
                     callbacks=callbacks,
-                    validation_data=val_data,
-                    validation_steps=len(val_data),
                     verbose=verbose)
 
 
