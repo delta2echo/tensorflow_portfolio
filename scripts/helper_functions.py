@@ -387,7 +387,7 @@ def BuildCompileFit(trn_data,val_data,loss,optimizer,callbacks,metrics,
   #--- Set Random Seed
   tf.random.set_seed(rndSeed)
   
-  if layers not None:
+  if layers is not None:
   #--- Build Model
     model = tf.keras.Sequential(layers)
   
