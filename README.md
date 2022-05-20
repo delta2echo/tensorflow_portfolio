@@ -9,9 +9,9 @@ This portfolio was built with information provided by the **Zero-to-Mastery: Ten
 ---
 # Useful Resources:
 	
-	* ## Transfer Learning/Model Repositories:
-		* ### [TensorFlow Hub](https://www.tensorflow.org/hub/)
-		* ### [TFHub.dev](https://tfhub.dev/)
+* ## Transfer Learning/Model Repositories:
+	* ### [TensorFlow Hub](https://www.tensorflow.org/hub/)
+	* ### [TFHub.dev](https://tfhub.dev/)
 
-	* ## Tracking Experiments: [Tensorboard](https://tensorboard.dev/)
-	* ## End-to-End ML pipeline: [TensorFlow Extended (TFX)](https://www.tensorflow.org/tfx/)
+* ## Tracking Experiments: [Tensorboard](https://tensorboard.dev/)
+* ## End-to-End ML pipeline: [TensorFlow Extended (TFX)](https://www.tensorflow.org/tfx/)
