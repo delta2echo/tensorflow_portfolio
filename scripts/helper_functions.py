@@ -306,7 +306,7 @@ def create_checkpoint_callback(dir_name, experiment_name):
   checkpoint_file = f'{dir_name}/{experiment_name}/{time_stamp}'
 
   #--Init TB callback:
-    checkpoint_callback = callbacks.ModelCheckpoint(filepath=checkpoint_file,
+  checkpoint_callback = callbacks.ModelCheckpoint(filepath=checkpoint_file,
                                                     save_weights_only=True,
                                                     save_best_only=False,
                                                     save_freq='epoch',
