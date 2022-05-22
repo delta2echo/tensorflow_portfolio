@@ -20,8 +20,11 @@ from tensorflow.keras.utils import plot_model
 from datetime import datetime
 from tensorflow.keras import callbacks
 
+
 from math import ceil    
-    
+
+
+
 def unzip_files(file_name):
   """
     Will extract provided zip or tar.gz file.
@@ -296,6 +299,23 @@ def view_random_images(data,class_names):
 
 
 #--------------------------------------------------Helper Functions: create_tensorboard_callback
+
+def create_checkpoint_callback(dir_name, experiment_name):
+  #---Create Log Directory:
+  time_stamp = datetime.now().strftime("%y%m%d_%H%M%S")  #yymmdd_HHMMSS
+  checkpoint_file = f'{dir_name}/{experiment_name}/{time_stamp}'
+
+  #--Init TB callback:
+    checkpoint_callback = callbacks.ModelCheckpoint(filepath=checkpoint_file,
+                                                    save_weights_only=True,
+                                                    save_best_only=False,
+                                                    save_freq='epoch',
+                                                    verbose=1)
+  
+  #---Return output:
+  print(f'Set checkpoint log files to: {log_dir}')
+  return checkpoint_callback
+
 
 def create_tensorboard_callback(dir_name, experiment_name):
   #---Create Log Directory:
