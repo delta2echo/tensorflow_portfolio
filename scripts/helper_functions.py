@@ -313,7 +313,7 @@ def create_checkpoint_callback(dir_name, experiment_name):
                                                     verbose=1)
   
   #---Return output:
-  print(f'Set checkpoint log files to: {log_dir}')
+  print(f'Set checkpoint log files to: {checkpoint_file}')
   return checkpoint_callback
 
 
