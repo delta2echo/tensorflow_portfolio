@@ -303,7 +303,7 @@ def view_random_images(data,class_names):
 def create_checkpoint_callback(dir_name, experiment_name):
   #---Create Log Directory:
   time_stamp = datetime.now().strftime("%y%m%d_%H%M%S")  #yymmdd_HHMMSS
-  checkpoint_file = f'{dir_name}/{experiment_name}/{time_stamp}'
+  checkpoint_file = f'{dir_name}/{experiment_name}/{time_stamp}.ckpt'
 
   #--Init TB callback:
   checkpoint_callback = callbacks.ModelCheckpoint(filepath=checkpoint_file,
