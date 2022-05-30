@@ -19,9 +19,13 @@ from tensorflow.keras.utils import plot_model
 #--- Imports used for callbacks:
 from datetime import datetime
 from tensorflow.keras import callbacks
-
-
 from math import ceil    
+
+#--- Imports used for plotting confusion matrix
+from sklearn.metrics import confusion_matrix
+from itertools import product
+
+
 
 
 
@@ -679,3 +683,92 @@ def get_outputs(batch_images,layers):
 #     break
 
   return outputs  
+  
+  
+#=====================================================
+#@title Helper Functions: Plot_CM
+def _Get_text_color(v_int,v_norm,thresh):
+    """
+      v_int: value as integer
+      v_norm: normalized value (float)
+      thresh: cutoff value for text color
+    """
+    v_pct = f"{v_norm*100:.1f}%"
+    text = f"{v_int}\n({v_pct})"
+    color = 'white' if v_int > thresh else 'black'
+    return text,color
+
+def _Plot_Text(cm,cm_norm,txt_size=15):
+  """ 
+    Will show confusion matrix values on
+    confusion matrix plot, and will color by value.
+  """
+  #--- 
+  x_range = range(cm.shape[0])
+  y_range = range(cm.shape[1])
+
+  #--- Set Color Thresholds:
+  threshold = (cm.max()+cm.min())/2
+
+  for x,y in product(x_range,y_range):
+    text,color = _Get_text_color(v_int=cm[x,y],
+                                 v_norm=cm_norm[x,y],
+                                 thresh=threshold)
+    plt.text(y,x,text,
+             ha='center',  #horizontal alignment
+             color = color,
+             size=txt_size)
+
+def _Format_Fig(ax,n_labels):
+    #--- Classes:
+  classes = False
+  labels = classes if classes else np.arange(n_labels) #cm.shape[0]
+
+  ax.set(title='Confusion Matrix',
+         xlabel='Predicted Labels',
+         ylabel='True Labels',
+         xticks=np.arange(n_labels),
+         yticks=np.arange(n_labels),
+         xticklabels=labels,
+         yticklabels=labels)
+
+  #--- Set x-axis labels to bottom:
+  ax.xaxis.set_label_position("bottom")
+  ax.xaxis.tick_bottom()
+
+  #--- Adjust label size:
+  ax.xaxis.label.set_size(15)
+  ax.yaxis.label.set_size(15)
+  ax.title.set_size(15)
+
+
+def Plot_CM(y,y_pred,figsize=(6,6),txt_size=15):
+
+  #--- Create Confusion Matrix
+  cm = confusion_matrix(y,y_pred)
+  cm_norm = cm.astype('float')/cm.sum(axis=1)
+  n_classes = cm.shape[0]
+
+  #--- Plot Confusion Matrix
+  fig,ax = plt.subplots(figsize=figsize)
+  cax = ax.matshow(cm_norm,
+                   cmap=plt.cm.Blues,
+                   vmax=1.0,
+                   vmin=0.0,
+                   alpha=.98)
+  
+  fig.colorbar(cax,
+               fraction = 1/figsize[0],
+               aspect=figsize[0])
+
+
+
+  #--- Format the Figure
+  _Format_Fig(ax=ax,
+              n_labels=n_classes)
+  
+
+  #--- Plot Text:
+  _Plot_Text(cm,cm_norm,txt_size)
+
+  return cm_norm
