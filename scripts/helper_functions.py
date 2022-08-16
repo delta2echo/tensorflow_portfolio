@@ -1,3 +1,25 @@
+"""
+  Primary Functions:
+    unzip_files(file_name)
+      file_name str:  path to file. Handles zip & tar
+    
+    count_files(folder_name)
+      folder_name str:  Recursivly counts files in folder
+
+    create_tensorboard_callback(dir_name, experiment_name)
+             dir_name str: folder to store callbacks
+      experiment_name str: 
+
+    BuildCompileFit(trn_data,val_data,loss,optimizer,callbacks,metrics,
+                    rndSeed,epochs,layers=None,model=None,train_percent=1,validation_percent=1,
+                    verbose=0, show_model=False,model_name='Model')
+      Returns model
+
+
+    ContinueTraining(trn_data,val_data,model,callbacks,epochs,initial_epoch=0,
+                    train_percent=1,validation_percent=1,verbose=0)
+      Returns model
+"""
 
 #--- imports needed for retrieving data
 import zipfile
