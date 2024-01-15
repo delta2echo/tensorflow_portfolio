@@ -1,0 +1,13 @@
+{
+  "embeddings": [
+    {
+      "tensorName": "Twitter Disaster Word Embeddings",
+      "tensorShape": [
+        10000,
+        128
+      ],
+      "tensorPath": "https://raw.githubusercontent.com/delta2echo/tensorflow_portfolio/main/05_NLP/Embeddings/vectors.tsv",
+      "metadataPath": "https://raw.githubusercontent.com/delta2echo/tensorflow_portfolio/main/05_NLP/Embeddings/metadata.tsv"
+    }
+  ]
+}
